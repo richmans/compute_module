@@ -1,0 +1,26 @@
+# HELLO WORLD
+# every computer must have a hello world program
+SET 48
+WRITE
+SET 65
+WRITE
+SET 6c
+WRITE
+WRITE
+SET 6f
+WRITE
+SET 20
+WRITE
+SET 77
+WRITE
+SET 6f
+WRITE
+SET 72
+WRITE
+SET 6c
+WRITE
+SET 64
+WRITE
+SET 21
+WRITE
+HALT

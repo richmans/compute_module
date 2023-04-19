@@ -93,7 +93,22 @@ class Machine:
             Instruction(0xa7, "SETB", self.i_setb),
         ]
         self.instructions = {i.num: i for i in self.instruction_set}
-
+        
+    def reset(self):
+      self.mem = [0] * self.memsize
+      self.ra = 0
+      self.rb = 0
+      self.pc = 0
+      self.instruction = 0
+      self.arg1 = 0
+      self.arg2 = 0
+      self.portin = Queue()
+      self.portout = Queue()
+      self.f_portout_was_written = False
+      self.f_halted = False
+      self.f_overflow = False
+      self.f_fault = False
+      
     def load(self, data:bytes,  offset:int=0):
         """
         set a range of bytes in memory. 
@@ -219,7 +234,16 @@ class Machine:
     def __repr__(self):
         iname = self.instructions[self.instruction].name
         return f"A: {self.ra} B: {self.rb} I: {iname},{self.arg1} PC: {self.pc}"
-    
+
+def read_program(infil):
+   progfile = infil
+   if progfile == '-':
+     prog = sys.stdin.buffer.read()
+   else:
+     with open(progfile, 'rb') as f:
+       prog = f.read()
+   return prog
+   
 if __name__ == '__main__':
     parser = ArgumentParser(description='Run the amazing computer')
     parser.add_argument('program', metavar='FILE', help='Program file to execute (use - to read the program from stdin)')
@@ -233,12 +257,7 @@ if __name__ == '__main__':
 
     m = Machine(bitwidth=args.bitwidth, memsize=args.memsize)
     # Read the program from a file or stdin
-    progfile = args.program
-    if progfile == '-':
-        prog = sys.stdin.buffer.read()
-    else:
-        with open(progfile, 'rb') as f:
-            prog = f.read()
+    prog = read_program(args.program)
     # Load the program into the memory of the machine
     m.load(prog)
     # Push the provided bytes into the portin queue
